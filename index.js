@@ -103,7 +103,7 @@ const defaultTemplate = () => ({
   events: [],
 });
 
-export async function generateABI(ctc, template = defaultTemplate) {
+async function generateABI(ctc, template = defaultTemplate) {
   const [{ sigs }, eventTys] = await Promise.all([
     ctc.getABI(true),
     ctc.getEventTys(),
@@ -116,4 +116,8 @@ export async function generateABI(ctc, template = defaultTemplate) {
     abi.events.push(event);
   });
   return abi;
+}
+
+module.exports = {
+  generateABI,
 }
