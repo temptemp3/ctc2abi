@@ -2,7 +2,24 @@
 
 Generates arc-4 interface description object from reach contract handle.
 
+## Features
+
+* Translates reach contract handle to arc-4 interface description object.
+* Supports readonly menthods.
+
+## Installation
+
+Install with npm:
+
+```
+npm install ctc2abi
+```
+
 ## usage
+
+Import the module and call the generateABI function with the reach contract handle as argument. The function returns a promise that resolves to the arc-4 interface description object.
+
+### Write interface description object to file
 
 ```
 import * as backend from "./build/index.main.mjs";
