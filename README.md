@@ -38,6 +38,16 @@ try {
 } catch (err) {
   console.error(err);
 }
+//{
+//  "name": "YourContractName",
+//  "desc": "Description of your contract",
+//  "methods": [
+//    {
+//      "name": "_reachp_0",
+//      "args": [{ "type": "uint64" }, { "type": "(byte[67],address)" }],
+//      "returns": { "type": "void" }
+//    },
+//    ...
 ```
 
 ## additional information
