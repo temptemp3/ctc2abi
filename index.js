@@ -108,10 +108,10 @@ async function generateABI(ctc, template = defaultTemplate) {
   const abi = template();
   sigs.forEach((sig) => {
     const method = generateABIMethod(sig);
-    if(readonlyMethods.includes(method.name)) {
+    if (readonlyMethods.includes(method.name)) {
       method.readonly = true;
     }
-    abi.methods.push(generateABIMethod(sig));
+    abi.methods.push(method);
   });
   abi.events = generateABIEvent(eventTys);
   return abi;
