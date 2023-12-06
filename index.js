@@ -104,8 +104,13 @@ function defaultTemplate() {
 async function generateABI(ctc, template = defaultTemplate) {
   const { sigs } = await ctc.getABI(true);
   const eventTys = await ctc.getEventTys();
+  const readonlyMethods = Object.keys(ctc.unsafeViews);
   const abi = template();
   sigs.forEach((sig) => {
+    const method = generateABIMethod(sig);
+    if(readonlyMethods.includes(method.name)) {
+      method.readonly = true;
+    }
     abi.methods.push(generateABIMethod(sig));
   });
   abi.events = generateABIEvent(eventTys);
