@@ -1,3 +1,6 @@
+function typeToObject(arg) {
+  return { type: arg };
+}
 function generateABIArgumentValue(sig) {
   if (
     sig.indexOf(",") === -1 &&
@@ -37,7 +40,6 @@ function generateABIArgumentValue(sig) {
   if (buffer.length > 0) k.push(buffer);
   return k;
 }
-
 function generateABIArgument(sig) {
   if (sig[0] !== "(") return sig;
   let buffer = "";
@@ -60,7 +62,6 @@ function generateABIArgument(sig) {
   } while (d > 0);
   return buffer;
 }
-
 function generateABIMethod(sig) {
   let functionNameIndex = sig.indexOf("(");
   let functionName = sig.slice(0, functionNameIndex);
@@ -75,12 +76,8 @@ function generateABIMethod(sig) {
           Array.isArray(a)
             ? a
                 .map((b) => (Array.isArray(b) ? `(${b.join(",")})` : b))
-                .map((a) => {
-                  type: a;
-                })
-            : [a].map((a) => {
-                type: a;
-              }))(generateABIArgumentValue(args));
+                .map(typeToObject)
+            : [a].map(typeToObject))(generateABIArgumentValue(args));
   const method = {
     name: functionName,
     args: methodArgs,
@@ -88,36 +85,32 @@ function generateABIMethod(sig) {
   };
   return method;
 }
-const generateABIEvents = (eventTy) => {
+const generateABIEvent = (eventTy) => {
   const events = Object.entries(eventTy).map(([k, v]) => ({
     name: k,
     args: v.map((a) => ({ type: a.toString() })),
   }));
   return events;
 };
-
-const defaultTemplate = () => ({
-  name: "YourContractName",
-  desc: "Description of your contract",
-  methods: [],
-  events: [],
-});
-
+function defaultTemplate() {
+  const abi = {
+    name: "YourContractName",
+    desc: "Description of your contract",
+    methods: [],
+    events: [],
+  };
+  return abi;
+}
 async function generateABI(ctc, template = defaultTemplate) {
-  const [{ sigs }, eventTys] = await Promise.all([
-    ctc.getABI(true),
-    ctc.getEventTys(),
-  ]);
+  const { sigs } = await ctc.getABI(true);
+  const eventTys = await ctc.getEventTys();
   const abi = template();
   sigs.forEach((sig) => {
     abi.methods.push(generateABIMethod(sig));
   });
-  generateABIEvents(eventTys).forEach((event) => {
-    abi.events.push(event);
-  });
+  abi.events = generateABIEvent(eventTys);
   return abi;
 }
-
 module.exports = {
   generateABI,
-}
+};
