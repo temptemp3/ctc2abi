@@ -100,12 +100,9 @@ const defaultTemplate = {
   events: [],
 };
 
-async function generateABI(ctc, templateOverride = {}) {
+async function generateABI(ctc, template = defaultTemplate) {
   const { sigs } = await ctc.getABI(true);
-  const abi = {
-    ...defaultTemplate,
-    ...templateOverride,
-  };
+  const abi = template;
   if (ctc.getEventTys) {
     eventTys = await ctc.getEventTys();
     abi.events = generateABIEvent(eventTys);
