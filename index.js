@@ -92,22 +92,19 @@ const generateABIEvent = (eventTy) => {
   }));
   return events;
 };
-function defaultTemplate() {
-  const abi = {
-    name: "YourContractName",
-    desc: "Description of your contract",
-    methods: [],
-    events: [],
-  };
-  return abi;
-}
+
+const defaultTemplate = {
+  name: "YourContractName",
+  desc: "Description of your contract",
+  methods: [],
+  events: [],
+};
+
 async function generateABI(ctc, templateOverride = {}) {
   const { sigs } = await ctc.getABI(true);
   const abi = {
     ...defaultTemplate,
     ...templateOverride,
-    methods: [...(templateOverride?.methods ?? [])],
-    events: [...(templateOverride?.events ?? [])],
   };
   if (ctc.getEventTys) {
     eventTys = await ctc.getEventTys();
