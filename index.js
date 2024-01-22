@@ -103,9 +103,12 @@ function defaultTemplate() {
 }
 async function generateABI(ctc, template = defaultTemplate) {
   const { sigs } = await ctc.getABI(true);
-  const eventTys = await ctc.getEventTys();
-  const readonlyMethods = Object.keys(ctc.unsafeViews);
   const abi = template();
+  if(ctc.getEventTys) {
+    eventTys = await ctc.getEventTys();
+    abi.events = generateABIEvent(eventTys);
+  }
+  const readonlyMethods = Object.keys(ctc.unsafeViews);
   sigs.forEach((sig) => {
     const method = generateABIMethod(sig);
     if (readonlyMethods.includes(method.name)) {
@@ -113,9 +116,24 @@ async function generateABI(ctc, template = defaultTemplate) {
     }
     abi.methods.push(method);
   });
-  abi.events = generateABIEvent(eventTys);
   return abi;
 }
+
+function getABIInfo(abi) {
+  const names = [];
+  for (const method of abi.methods) {
+    names.push(
+      method.name +
+        "(" +
+        method.args.map((el) => el.type).join(",") +
+        ")" +
+        method.returns.type
+    );
+  }
+  return names;
+}
+
 module.exports = {
   generateABI,
+  getABIInfo,
 };
